@@ -209,6 +209,10 @@ for iter in range(max_iters):
 
 # generate from the model
 while True:
-    prompt = input("Prompt: ")
-    context = encode(prompt)
-    print(decode(m.generate([context], max_new_tokens=2000)[0].tolist()))
+    text = input("Prompt: ")
+    tokens = input("Max tokens: ")
+    tokens = int(tokens)
+    encoded_text = encode(text)
+    context = torch.tensor([encoded_text], dtype=torch.long, device=device)
+    print("Thinking...")
+    print(decode(m.generate(context, max_new_tokens=tokens)[0].tolist()))
