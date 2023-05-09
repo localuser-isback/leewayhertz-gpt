@@ -208,5 +208,7 @@ for iter in range(max_iters):
     optimizer.step()
 
 # generate from the model
-context = torch.zeros((1, 1), dtype=torch.long, device=device)
-print(decode(m.generate(context, max_new_tokens=2000)[0].tolist()))
+while True:
+    prompt = input("Prompt: ")
+    context = encode(prompt)
+    print(decode(m.generate([context], max_new_tokens=2000)[0].tolist()))
