@@ -1,3 +1,4 @@
+
 import torch
 import torch.nn as nn
 from torch.nn import functional as F
@@ -237,7 +238,7 @@ while True:
             torch.save(model, FILE)
             saved = "1"
         else:
-            pass
+            saved = "1"
     else:
         pass
     text = input("Prompt: ")
