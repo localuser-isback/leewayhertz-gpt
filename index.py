@@ -5,7 +5,7 @@ from torch.nn import functional as F
 # hyperparameters
 batch_size = 16 # how many independent sequences will we process in parallel?
 block_size = 32 # what is the maximum context length for predictions?
-max_iters = 5000
+max_iters = 15000
 eval_interval = 100
 learning_rate = 1e-3
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -13,10 +13,12 @@ eval_iters = 200
 n_embd = 64
 n_head = 4
 n_layer = 4
-dropout = 0.0
+dropout = 0.1
 # ------------
+FILE = "model.pth"
 
 torch.manual_seed(1337)
+
 
 # wget https://raw.githubusercontent.com/karpathy/char-rnn/master/data/tinyshakespeare/input.txt
 with open('input.txt', 'r', encoding='utf-8') as f:
@@ -36,6 +38,7 @@ data = torch.tensor(encode(text), dtype=torch.long)
 n = int(0.9*len(data)) # first 90% will be train, rest val
 train_data = data[:n]
 val_data = data[n:]
+
 
 # data loading
 def get_batch(split):
@@ -183,6 +186,24 @@ class BigramLanguageModel(nn.Module):
             idx = torch.cat((idx, idx_next), dim=1) # (B, T+1)
         return idx
 
+#load model from file
+
+loadm = input("Load model [Y/N]: ")
+if loadm == "Y":
+    while True:
+        model = torch.load(FILE)
+        model.eval()
+        m = model.to(device)
+        text = input("Prompt: ")
+        tokens = input("Max tokens: ")
+        tokens = int(tokens)
+        encoded_text = encode(text)
+        context = torch.tensor([encoded_text], dtype=torch.long, device=device)
+        print("Thinking...")
+        print(decode(m.generate(context, max_new_tokens=tokens)[0].tolist()))
+else:
+    pass
+
 model = BigramLanguageModel()
 m = model.to(device)
 # print the number of parameters in the model
@@ -208,7 +229,17 @@ for iter in range(max_iters):
     optimizer.step()
 
 # generate from the model
+saved = "0"
 while True:
+    if saved == "0":
+        savem = input("Save model [Y/N]: ")
+        if savem == "Y":
+            torch.save(model, FILE)
+            saved = "1"
+        else:
+            pass
+    else:
+        pass
     text = input("Prompt: ")
     tokens = input("Max tokens: ")
     tokens = int(tokens)
