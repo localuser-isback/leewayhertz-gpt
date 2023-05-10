@@ -192,16 +192,20 @@ class BigramLanguageModel(nn.Module):
 loadm = input("Load model [Y/N]: ")
 if loadm == "Y":
     while True:
-        model = torch.load(FILE)
-        model.eval()
-        m = model.to(device)
-        text = input("Prompt: ")
-        tokens = input("Max tokens: ")
-        tokens = int(tokens)
-        encoded_text = encode(text)
-        context = torch.tensor([encoded_text], dtype=torch.long, device=device)
-        print("Thinking...")
-        print(decode(m.generate(context, max_new_tokens=tokens)[0].tolist()))
+        try:
+            model = torch.load(FILE)
+            model.eval()
+            m = model.to(device)
+            text = input("Prompt: ")
+            tokens = input("Max tokens: ")
+            tokens = int(tokens)
+            encoded_text = encode(text)
+            context = torch.tensor([encoded_text], dtype=torch.long, device=device)
+            print("Thinking...")
+            print(decode(m.generate(context, max_new_tokens=tokens)[0].tolist()))
+        except Exception as e:
+            print("There was an error...>>> ", e)
+            exit()
 else:
     pass
 
